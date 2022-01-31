@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom | Chatter Box</title>
+    <link rel="stylesheet" href="/stylesheets/chat.css">
+</head>
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+    integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script> -->
+
+
+    <h1>Chatter Box</h1>
+    <div class="container msgFld">
+        <!-- <div class="leftBox"> <div class="left"><span>Aditya :</span> Hello This Is Aditya</div></div>
+        <div class="rightBox"> <div class="right"><span>Anil :</span> Hello This Is Anil</div> </div> -->
+    </div>
+    <div class="form">
+        <input class="textarea" name="msgtext" id="msg" cols="1" rows="1"></input>
+        <input id="btn" type="submit" value="Send Message">
+        <!-- <button id="btn">Send Msg</button> -->
+        <p class="usr" style="display: none;" ><%= name %></p>
+    </div>
+    <script>
+        var audio = new Audio('/images/ting.mp3')
+        const clientIo = io();
+        const btn = document.querySelector('#btn')
+        const txtArea = document.querySelector('input')
+        const msgFld = document.querySelector('.msgFld')
+        const usr = document.querySelector('.usr')
+        const right = document.querySelector('.rightBox')
+
+        btn.addEventListener('click' , ()=>{
+            clientIo.emit('new msg',{sender : usr.textContent, msg:txtArea.value, position: right})
+            txtArea.value = "";
+        })
+        clientIo.on('msg', function (message, position, newuser){
+            // msgFld.innerHTML += `<div class="${message.position}"> <div class="right"><span>${message.sender} </span> User Joined The Chat </div></div>`
+            msgFld.innerHTML += ` <div class="${message.position}"> <div class="right"><span>${message.sender}:</span> ${message.msg}</div></div>`
+            msgFld.scrollTop = msgFld.scrollHeight
+            audio.play()
+            
+        })
+        
+    </script>
+</body>
+</html>
